@@ -6,7 +6,8 @@ screen = pygame.display.set_mode((800,400)) #creating a display surface for pyga
 pygame.display.set_caption('introGame') #setting game's name
 clock = pygame.time.Clock() #creating a Clock obj to cap the game's fps
 
-test_surface = pygame.image.load('graphics/Sky.png')
+sky_surface = pygame.image.load('graphics/Sky.png')
+ground_surface = pygame.image.load('graphics/ground.png')
 
 while True: #keeps the game running indefinetly. Draw all elements and update everything
     for event in pygame.event.get(): #event catcher
@@ -14,7 +15,8 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
             pygame.quit() #for the user to quit the game. This creates an error because python can't keep up, but it's solved with the "exit" function
             exit() #ends the game. at least on windows
 
-    screen.blit(test_surface,(200,100)) #blit == block image transfer, meaning putting one surface on other   
+    screen.blit(sky_surface,(0,0)) #blit == block image transfer, meaning putting one surface on other   
+    screen.blit(ground_surface,(0,300))
 
     pygame.display.update() #updates the display surface
     clock.tick(60) #frames per seccond capped to 60
