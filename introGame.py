@@ -10,7 +10,9 @@ test_font = pygame.font.Font('font/Pixeltype.ttf', 50) #params: font,size
 #surfaces
 sky_surface = pygame.image.load('graphics/Sky.png').convert()
 ground_surface = pygame.image.load('graphics/ground.png').convert()
-text_surface = test_font.render('My game', False, 'Green') #params: 'text itself', AntiAliasing, colour
+#creating a score
+score_surf = test_font.render('Score', False, (64,64,64)) #params: 'text itself', AntiAliasing, colour
+score_rect = score_surf.get_rect(center = (400,50))
 #adding a movable surface
 snail_surf = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
 snail_rect = snail_surf.get_rect(bottomright = (600,300))
@@ -23,19 +25,43 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
         if event.type == pygame.QUIT: #it's QUIT, not quit.
             pygame.quit() #for the user to quit the game. This creates an error because python can't keep up, but it's solved with the "exit" function
             exit() #ends the game. at least on windows
+        # if event.type == pygame.MOUSEMOTION:
+        #     if player_rect.collidepoint(event.pos):
+        #         print('collision')
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:    
+                print('jump')
+        if event.type == pygame.KEYUP:
+            print('key up')
+
 #blit == block image transfer, meaning putting one surface on other 
     screen.blit(ground_surface,(0,300)) #params: surface object, position
     screen.blit(sky_surface,(0,0))   
-    screen.blit(text_surface,(300,50))
+    pygame.draw.rect(screen, '#c0e8ec', score_rect) #params: display surface, colour, object, size
+    pygame.draw.rect(screen, '#c0e8ec', score_rect, 10) #to add margins
+
+
+
+    screen.blit(score_surf,score_rect)
+    #moving the snail surface
     snail_rect.x -= 4
     if snail_rect.right <= 0:
         snail_rect.left = 800
     screen.blit(snail_surf,(snail_rect))
     screen.blit(player_surf,player_rect)
 
+    #to control player
+    # keys = pygame.key.get_pressed()
+    # if keys[pygame.K_SPACE]:
+    #     print("jump")
+
     #adding colliders
-    if player_rect.colliderect(snail_rect):
-        print("collision")
+    # if player_rect.colliderect(snail_rect):
+    #     print("collision")
+
+    # mouse_pos = pygame.mouse.get_pos()
+    # if player_rect.collidepoint(mouse_pos):
+    #     print(pygame.mouse.get_pressed())
 
     pygame.display.update() #updates the display surface
     clock.tick(60) #frames per seccond capped to 60
