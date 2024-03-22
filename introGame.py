@@ -32,6 +32,17 @@ player_surf = pygame.image.load('graphics/Player/player_walk_1.png').convert_alp
 player_rect = player_surf.get_rect(midbottom =(80,300)) #create a rectangle using the surface's size
 player_grav = 0 #gravity to improve falling feel
 
+#intro screen
+player_stand = pygame.image.load('graphics/Player/player_stand.png').convert_alpha() #image of our hero at the start
+player_stand = pygame.transform.rotozoom(player_stand,0,2)
+player_stand_rect = player_stand.get_rect(center = (400,200))
+
+game_name = test_font.render('introGame', False,(111,196,169))
+game_name_rect = game_name.get_rect(center = (400,80))
+
+game_message = test_font.render('Press space to Run', False, (111,196,169))
+game_message_rect = game_message.get_rect(center = (400, 340))
+
 while True: #keeps the game running indefinetly. Draw all elements and update everything
     for event in pygame.event.get(): #event catcher
         if event.type == pygame.QUIT: #it's QUIT, not quit.
@@ -61,7 +72,7 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
         display_score()
 
         #snail blit
-        snail_rect.x -= 4
+        snail_rect.x -= 6
         if snail_rect.right <= 0:
             snail_rect.left = 800
         screen.blit(snail_surf,(snail_rect))
@@ -77,7 +88,10 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
         if snail_rect.colliderect(player_rect):
             game_active = False
     else: #intro part of our game
-        screen.fill('Black')
+        screen.fill((94,129,162))
+        screen.blit(player_stand, player_stand_rect)
+        screen.blit(game_name, game_name_rect)
+        screen.blit(game_message, game_message_rect)
 
     pygame.display.update() #updates the display surface
     clock.tick(60) #frames per seccond capped to 60
