@@ -25,6 +25,14 @@ def obstacle_movement(obstacle_list):
     else:
         return []
 
+#adding a collider detector
+def collisions(player, obstacles):
+    if obstacles:
+        for obstacle_rect in obstacles:
+            if player.colliderect(obstacle_rect):
+                return False
+    return True
+
 pygame.init() #initializing pygame lib
 screen = pygame.display.set_mode((800,400)) #creating a display surface for pygame with 1 fps rendered and an 800x400 screen size(width and height). 
 pygame.display.set_caption('introGame') #setting game's name
@@ -119,12 +127,15 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
         #obstacle movement
         obstacle_rect_list = obstacle_movement(obstacle_rect_list)
 
-    #adding a game over
-        # if snail_rect.colliderect(player_rect):
-        #     game_active = False
+    #collisions   
+        game_active = collisions(player_rect, obstacle_rect_list)
+
     else: #intro part of our game
         screen.fill((94,129,162))
         screen.blit(player_stand, player_stand_rect)
+        obstacle_rect_list.clear()
+        player_rect.midbottom = (80,300)
+        player_grav = 0
         #making a global score
         score_message = test_font.render(f'Your Score: {score}', False, (111,196,169))
         score_message_rect = score_message.get_rect(center= (400,330))
