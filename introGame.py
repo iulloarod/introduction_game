@@ -33,6 +33,17 @@ def collisions(player, obstacles):
                 return False
     return True
 
+def player_animation(): #plays walking if player is on floor, and jumping if not on floor
+    global player_surf, player_index
+
+    if player_rect.bottom < 300:
+        player_surf = player_jump
+    else:
+        player_index += 0.1
+        if player_index >= len(player_walk):
+            player_index = 0
+        player_surf = player_walk[int(player_index)]
+
 pygame.init() #initializing pygame lib
 screen = pygame.display.set_mode((800,400)) #creating a display surface for pygame with 1 fps rendered and an 800x400 screen size(width and height). 
 pygame.display.set_caption('introGame') #setting game's name
@@ -42,23 +53,22 @@ game_active = False #adding a game status to get check if the game is running
 start_time = 0
 score = 0
 
-#surfaces
+#static surfaces
 sky_surface = pygame.image.load('graphics/Sky.png').convert()
 ground_surface = pygame.image.load('graphics/ground.png').convert()
 
-#creating a score
-# score_surf = test_font.render('Score', False, (64,64,64)) #params: 'text itself', AntiAliasing, colour
-# score_rect = score_surf.get_rect(center = (400,50))
-
-#obstacles (enemies)
+#obstacles (enemies) surfaces
 snail_surf = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
-
 fly_surf = pygame.image.load('graphics/Fly/Fly1.png').convert_alpha()
-
-obstacle_rect_list = []
+obstacle_rect_list = [] #to create a set of enemies rendered on screen
 
 #player surface
-player_surf = pygame.image.load('graphics/Player/player_walk_1.png').convert_alpha()
+player_walk_1 = pygame.image.load('graphics/Player/player_walk_1.png').convert_alpha()
+player_walk_2 = pygame.image.load('graphics/Player/player_walk_2.png').convert_alpha()
+player_walk = [player_walk_1, player_walk_2]
+player_index = 0 #to pick wish surface to use
+player_jump = pygame.image.load('graphics/Player/jump.png').convert_alpha()
+player_surf = player_walk[player_index]
 player_rect = player_surf.get_rect(midbottom =(80,300)) #create a rectangle using the surface's size
 player_grav = 0 #gravity to improve falling feel
 
@@ -106,22 +116,14 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
         #screen blit == block image transfer, meaning putting one surface on other 
         screen.blit(ground_surface,(0,300)) #params: surface object, position
         screen.blit(sky_surface,(0,0))   
-        # pygame.draw.rect(screen, '#c0e8ec', score_rect) #params: display surface, colour, object, size
-        # pygame.draw.rect(screen, '#c0e8ec', score_rect, 10) #to add margins
-        # screen.blit(score_surf,score_rect)
         score = display_score()
-
-        #snail blit
-        # snail_rect.x -= 6
-        # if snail_rect.right <= 0:
-        #     snail_rect.left = 800
-        # screen.blit(snail_surf,(snail_rect))
 
         #player blit
         player_grav += 1 #to get a constant downforce to our player
         player_rect.y += player_grav #to get a "real" gravity for falling
         if player_rect.bottom >= 300: #to add a "collision with ground" without using collisions to save resources.
             player_rect.bottom = 300 
+        player_animation()
         screen.blit(player_surf,player_rect)
 
         #obstacle movement
