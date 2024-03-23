@@ -1,5 +1,6 @@
 import pygame #adding the pygame lib to use as a game engine.
 from sys import exit #to safely interrupt code from running (helps quiting the game)
+from random import randint #to create random obstacle's spawn
 
 def display_score():
     current_time = int (pygame.time.get_ticks() / 1000) - start_time
@@ -7,6 +8,22 @@ def display_score():
     score_rect = score_surf.get_rect(center = (400,50))
     screen.blit(score_surf, score_rect)
     return current_time
+
+def obstacle_movement(obstacle_list):
+    if obstacle_list:
+        for obstacle_rect in obstacle_list:
+            obstacle_rect.x -= 5
+
+            if obstacle_rect.bottom == 300:
+                screen.blit(snail_surf, obstacle_rect)
+            else:
+                screen.blit(fly_surf, obstacle_rect)
+        
+        obstacle_list = [obstacle for obstacle in obstacle_list if obstacle.x > -100] #(list comprehension)deletes obstacle from list after pos -100 
+        
+        return obstacle_list
+    else:
+        return []
 
 pygame.init() #initializing pygame lib
 screen = pygame.display.set_mode((800,400)) #creating a display surface for pygame with 1 fps rendered and an 800x400 screen size(width and height). 
@@ -25,11 +42,14 @@ ground_surface = pygame.image.load('graphics/ground.png').convert()
 # score_surf = test_font.render('Score', False, (64,64,64)) #params: 'text itself', AntiAliasing, colour
 # score_rect = score_surf.get_rect(center = (400,50))
 
-#adding a movable surface
+#obstacles (enemies)
 snail_surf = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
-snail_rect = snail_surf.get_rect(bottomright = (600,300))
 
-#adding a player surface
+fly_surf = pygame.image.load('graphics/Fly/Fly1.png').convert_alpha()
+
+obstacle_rect_list = []
+
+#player surface
 player_surf = pygame.image.load('graphics/Player/player_walk_1.png').convert_alpha()
 player_rect = player_surf.get_rect(midbottom =(80,300)) #create a rectangle using the surface's size
 player_grav = 0 #gravity to improve falling feel
@@ -44,6 +64,10 @@ game_name_rect = game_name.get_rect(center = (400,80))
 
 game_message = test_font.render('Press space to Run', False, (111,196,169))
 game_message_rect = game_message.get_rect(center = (400, 340))
+
+#timer
+obstacle_timer = pygame.USEREVENT +1
+pygame.time.set_timer(obstacle_timer, 1500)
 
 while True: #keeps the game running indefinetly. Draw all elements and update everything
     for event in pygame.event.get(): #event catcher
@@ -61,8 +85,14 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     game_active = True
-                    snail_rect.left = 800
                     start_time = int (pygame.time.get_ticks() / 1000)
+
+        if event.type == obstacle_timer and game_active:
+            if randint(0,2):
+                obstacle_rect_list.append(snail_surf.get_rect(bottomright = (randint(900, 1100),300)))
+            else:
+                obstacle_rect_list.append(fly_surf.get_rect(bottomright = (randint(900, 1100),210)))
+
 
     if game_active: #the game part
         #screen blit == block image transfer, meaning putting one surface on other 
@@ -74,10 +104,10 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
         score = display_score()
 
         #snail blit
-        snail_rect.x -= 6
-        if snail_rect.right <= 0:
-            snail_rect.left = 800
-        screen.blit(snail_surf,(snail_rect))
+        # snail_rect.x -= 6
+        # if snail_rect.right <= 0:
+        #     snail_rect.left = 800
+        # screen.blit(snail_surf,(snail_rect))
 
         #player blit
         player_grav += 1 #to get a constant downforce to our player
@@ -86,9 +116,12 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
             player_rect.bottom = 300 
         screen.blit(player_surf,player_rect)
 
+        #obstacle movement
+        obstacle_rect_list = obstacle_movement(obstacle_rect_list)
+
     #adding a game over
-        if snail_rect.colliderect(player_rect):
-            game_active = False
+        # if snail_rect.colliderect(player_rect):
+        #     game_active = False
     else: #intro part of our game
         screen.fill((94,129,162))
         screen.blit(player_stand, player_stand_rect)
