@@ -6,14 +6,16 @@ def display_score():
     score_surf = test_font.render(f'Score: {current_time}', False, (64,64,64))
     score_rect = score_surf.get_rect(center = (400,50))
     screen.blit(score_surf, score_rect)
+    return current_time
 
 pygame.init() #initializing pygame lib
 screen = pygame.display.set_mode((800,400)) #creating a display surface for pygame with 1 fps rendered and an 800x400 screen size(width and height). 
 pygame.display.set_caption('introGame') #setting game's name
 clock = pygame.time.Clock() #creating a Clock obj to cap the game's fps
 test_font = pygame.font.Font('font/Pixeltype.ttf', 50) #params: font,size
-game_active = True #adding a game status to get check if the game is running
+game_active = False #adding a game status to get check if the game is running
 start_time = 0
+score = 0
 
 #surfaces
 sky_surface = pygame.image.load('graphics/Sky.png').convert()
@@ -69,7 +71,7 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
         # pygame.draw.rect(screen, '#c0e8ec', score_rect) #params: display surface, colour, object, size
         # pygame.draw.rect(screen, '#c0e8ec', score_rect, 10) #to add margins
         # screen.blit(score_surf,score_rect)
-        display_score()
+        score = display_score()
 
         #snail blit
         snail_rect.x -= 6
@@ -90,8 +92,15 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
     else: #intro part of our game
         screen.fill((94,129,162))
         screen.blit(player_stand, player_stand_rect)
+        #making a global score
+        score_message = test_font.render(f'Your Score: {score}', False, (111,196,169))
+        score_message_rect = score_message.get_rect(center= (400,330))
         screen.blit(game_name, game_name_rect)
-        screen.blit(game_message, game_message_rect)
+
+        if score == 0:
+            screen.blit(game_message, game_message_rect)
+        else:
+            screen.blit(score_message, score_message_rect)
 
     pygame.display.update() #updates the display surface
     clock.tick(60) #frames per seccond capped to 60
