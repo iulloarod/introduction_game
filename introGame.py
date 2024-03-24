@@ -1,6 +1,13 @@
 import pygame #adding the pygame lib to use as a game engine.
 from sys import exit #to safely interrupt code from running (helps quiting the game)
-from random import randint #to create random obstacle's spawn
+from random import randint#to create random obstacle's spawn
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load('graphics/Player/player_walk_1.png').convert_alpha()
+        self.rect = self.image.get_rect(midbottom = (200,300))
+
 
 def display_score():
     current_time = int (pygame.time.get_ticks() / 1000) - start_time
@@ -52,6 +59,9 @@ test_font = pygame.font.Font('font/Pixeltype.ttf', 50) #params: font,size
 game_active = False #adding a game status to get check if the game is running
 start_time = 0
 score = 0
+
+player = pygame.sprite.GroupSingle()
+player.add(Player())
 
 #static surfaces
 sky_surface = pygame.image.load('graphics/Sky.png').convert()
@@ -154,6 +164,8 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
             player_rect.bottom = 300 
         player_animation()
         screen.blit(player_surf,player_rect)
+
+        player.draw(screen)
 
         #obstacle movement
         obstacle_rect_list = obstacle_movement(obstacle_rect_list)
