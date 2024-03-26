@@ -40,6 +40,35 @@ class Player(pygame.sprite.Sprite):
         self.apply_gravity()
         self.animation_state()
 
+class Obstacle(pygame.sprite.Sprite):
+    def __init__(self, type):
+        super().__init__()
+
+        if type == 'fly':
+            fly_1 = pygame.image.load('graphics/Fly/Fly1.png').convert_alpha()
+            fly_2 = pygame.image.load('graphics/Fly/Fly2.png').convert_alpha()
+            self.frames = [fly_1, fly_2]
+            y_pos = 210
+        else:
+            snail_1 = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
+            snail_2 = pygame.image.load('graphics/snail/snail2.png').convert_alpha()
+            self.frames = [snail_1, snail_2]
+            y_pos = 300
+
+        self.animation_index = 0
+        self.image = self.frames[self.animation_index]
+        self.rect = self.image.get_rect(midbottom = (randint(900, 1100), y_pos))
+
+    def animation_state(self):
+        self.animation_index += 0.1
+        if self.animation_index >= len(self.frames):
+            self.animation_index = 0
+        self.image = self.frames[int(self.animation_index)]
+
+    def update(self):
+        self.animation_state()
+        self.rect.x -= 6
+
 def display_score():
     current_time = int (pygame.time.get_ticks() / 1000) - start_time
     score_surf = test_font.render(f'Score: {current_time}', False, (64,64,64))
@@ -91,8 +120,11 @@ game_active = False #adding a game status to get check if the game is running
 start_time = 0
 score = 0
 
+#Groups
 player = pygame.sprite.GroupSingle()
 player.add(Player())
+
+obstacle_group = pygame.sprite.Group()
 
 #static surfaces
 sky_surface = pygame.image.load('graphics/Sky.png').convert()
@@ -163,6 +195,7 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
                     start_time = int (pygame.time.get_ticks() / 1000)
         if game_active:
             if event.type == obstacle_timer:
+                obstacle_group.add(Obstacle('fly'))
                 if randint(0,2):
                     obstacle_rect_list.append(snail_surf.get_rect(bottomright = (randint(900, 1100),300)))
                 else:
@@ -198,6 +231,9 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
 
         player.draw(screen)
         player.update()
+
+        obstacle_group.draw(screen)
+        obstacle_group.update()
 
         #obstacle movement
         obstacle_rect_list = obstacle_movement(obstacle_rect_list)
