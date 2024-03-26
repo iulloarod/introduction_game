@@ -1,6 +1,6 @@
 import pygame #adding the pygame lib to use as a game engine.
 from sys import exit #to safely interrupt code from running (helps quiting the game)
-from random import randint#to create random obstacle's spawn
+from random import randint, choice #to create random obstacle's spawn
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -12,7 +12,7 @@ class Player(pygame.sprite.Sprite):
         self.player_jump = pygame.image.load('graphics/Player/jump.png').convert_alpha()
 
         self.image = self.player_walk[self.player_index]
-        self.rect = self.image.get_rect(midbottom = (200,300))
+        self.rect = self.image.get_rect(midbottom = (80,300))
         self.gravity = 0
 
     def player_input(self):
@@ -104,6 +104,13 @@ def collisions(player, obstacles):
             if player.colliderect(obstacle_rect):
                 return False
     return True
+
+def collision_sprite():
+    if pygame.sprite.spritecollide(player.sprite, obstacle_group, False):
+        obstacle_group.empty()
+        return False
+    else:
+        return True
 
 def player_animation(): #plays walking if player is on floor, and jumping if not on floor
     global player_surf, player_index
@@ -200,7 +207,7 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
                     start_time = int (pygame.time.get_ticks() / 1000)
         if game_active:
             if event.type == obstacle_timer:
-                obstacle_group.add(Obstacle('fly'))
+                obstacle_group.add(Obstacle(choice(['fly', 'snail', 'snail', 'snail'])))
                 # if randint(0,2):
                 #     obstacle_rect_list.append(snail_surf.get_rect(bottomright = (randint(900, 1100),300)))
                 # else:
@@ -227,12 +234,12 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
         score = display_score()
 
         #player blit
-        player_grav += 1 #to get a constant downforce to our player
-        player_rect.y += player_grav #to get a "real" gravity for falling
-        if player_rect.bottom >= 300: #to add a "collision with ground" without using collisions to save resources.
-            player_rect.bottom = 300 
-        player_animation()
-        screen.blit(player_surf,player_rect)
+        # player_grav += 1 #to get a constant downforce to our player
+        # player_rect.y += player_grav #to get a "real" gravity for falling
+        # if player_rect.bottom >= 300: #to add a "collision with ground" without using collisions to save resources.
+        #     player_rect.bottom = 300 
+        # player_animation()
+        # screen.blit(player_surf,player_rect)
 
         player.draw(screen)
         player.update()
@@ -241,10 +248,11 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
         obstacle_group.update()
 
         #obstacle movement
-        obstacle_rect_list = obstacle_movement(obstacle_rect_list)
+        # obstacle_rect_list = obstacle_movement(obstacle_rect_list)
 
         #collisions   
-        game_active = collisions(player_rect, obstacle_rect_list)
+        game_active = collision_sprite()
+        # game_active = collisions(player_rect, obstacle_rect_list)
 
     else: #intro part of our game
         screen.fill((94,129,162))
