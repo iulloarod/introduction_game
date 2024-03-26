@@ -17,8 +17,12 @@ class Player(pygame.sprite.Sprite):
     def apply_gravity(self):
         self.gravity += 1
         self.rect.y += self.gravity
-        if self.gravity >= 300:
+        if self.rect.bottom >= 300:
             self.rect.bottom = 300
+        
+    def update(self):
+        self.player_input()
+        self.apply_gravity()
 
 def display_score():
     current_time = int (pygame.time.get_ticks() / 1000) - start_time
@@ -177,6 +181,7 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
         screen.blit(player_surf,player_rect)
 
         player.draw(screen)
+        player.update()
 
         #obstacle movement
         obstacle_rect_list = obstacle_movement(obstacle_rect_list)
