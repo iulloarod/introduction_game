@@ -68,6 +68,11 @@ class Obstacle(pygame.sprite.Sprite):
     def update(self):
         self.animation_state()
         self.rect.x -= 6
+        self.destroy()
+
+    def destroy(self):
+        if self.rect.x <= -100:
+            self.kill()
 
 def display_score():
     current_time = int (pygame.time.get_ticks() / 1000) - start_time
@@ -196,10 +201,10 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
         if game_active:
             if event.type == obstacle_timer:
                 obstacle_group.add(Obstacle('fly'))
-                if randint(0,2):
-                    obstacle_rect_list.append(snail_surf.get_rect(bottomright = (randint(900, 1100),300)))
-                else:
-                    obstacle_rect_list.append(fly_surf.get_rect(bottomright = (randint(900, 1100),210)))
+                # if randint(0,2):
+                #     obstacle_rect_list.append(snail_surf.get_rect(bottomright = (randint(900, 1100),300)))
+                # else:
+                #     obstacle_rect_list.append(fly_surf.get_rect(bottomright = (randint(900, 1100),210)))
             if event.type == snail_animation_timer:
                 if snail_frame_index == 0:
                     snail_frame_index = 1
