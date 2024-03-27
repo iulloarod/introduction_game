@@ -215,10 +215,7 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
         if game_active:
             if event.type == obstacle_timer:
                 obstacle_group.add(Obstacle(choice(['fly', 'snail', 'snail', 'snail'])))
-                # if randint(0,2):
-                #     obstacle_rect_list.append(snail_surf.get_rect(bottomright = (randint(900, 1100),300)))
-                # else:
-                #     obstacle_rect_list.append(fly_surf.get_rect(bottomright = (randint(900, 1100),210)))
+
             if event.type == snail_animation_timer:
                 if snail_frame_index == 0:
                     snail_frame_index = 1
@@ -235,7 +232,6 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
 
 
     if game_active: #the game part
-        #screen blit == block image transfer, meaning putting one surface on other 
         screen.blit(ground_surface,(0,300)) #params: surface object, position
         screen.blit(sky_surface,(0,0))   
         score = display_score()
@@ -246,12 +242,8 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
         obstacle_group.draw(screen)
         obstacle_group.update()
 
-        #obstacle movement
-        # obstacle_rect_list = obstacle_movement(obstacle_rect_list)
-
         #collisions   
         game_active = collision_sprite()
-        # game_active = collisions(player_rect, obstacle_rect_list)
 
     else: #intro part of our game
         screen.fill((94,129,162))
