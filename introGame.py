@@ -240,14 +240,6 @@ while True: #keeps the game running indefinetly. Draw all elements and update ev
         screen.blit(sky_surface,(0,0))   
         score = display_score()
 
-        #player blit
-        # player_grav += 1 #to get a constant downforce to our player
-        # player_rect.y += player_grav #to get a "real" gravity for falling
-        # if player_rect.bottom >= 300: #to add a "collision with ground" without using collisions to save resources.
-        #     player_rect.bottom = 300 
-        # player_animation()
-        # screen.blit(player_surf,player_rect)
-
         player.draw(screen)
         player.update()
 
